@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+  <head>
+    <title>貝氏平均法模擬工具</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>貝氏平均法模擬工具-以營建業主空污費逾期申報為例</h1>
+
+      <section class="card" id="explanation">
+        <h2>貝氏平均法 (Bayesian Average) 核心架構</h2>
+        <div class="content">
+          <p>
+            貝式平均法的主要目的是為了校正小樣本數據產生的極端偏差，防止觀測次數過少的個體因隨機性而佔據排名的極端位置（例如僅
+            1 次）。 單純使用<strong>算術平均數</strong>無法客觀反映真實信譽。
+            <strong>貝氏平均法</strong>透過引入「信心常數 (m)」與「全體平均
+            (c)」，在數據量不足時向全體平均靠攏，數據量充足時則回歸該統計的實際表現。
+          </p>
+          <div class="formula-box">
+            <p class="formula">
+              w =
+              <span class="fraction"
+                ><span class="numerator">(v × r) + (m × c)</span
+                ><span class="denominator">v + m</span></span
+              >
+            </p>
+            <ul class="variables">
+              <li><strong>w</strong>：貝氏平均逾期率</li>
+              <li><strong>v</strong>：業者的申報次數</li>
+              <li><strong>r</strong>：業者的逾期申報率</li>
+              <li><strong>m</strong>：信心常數</li>
+              <li><strong>c</strong>：全體業者的平均逾期率</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="controls">
+        <h2>參數設定與全體數據</h2>
+
+        <!-- 上方：資料生成控制 -->
+        <div class="control-panel-header">
+          <div class="input-group">
+            <label for="sample-size-input">模擬樣本數量：</label>
+            <input
+              type="number"
+              id="sample-size-input"
+              value="100"
+              step="100"
+              min="1"
+            />
+            <button id="regenerate-btn">重新生成模擬資料</button>
+          </div>
+        </div>
+
+        <!-- 下方：統計數據卡片 -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <label>全體平均逾期率 (c)</label>
+            <div id="c-value" class="value">--</div>
+            <small>所有業者的平均逾期表現</small>
+          </div>
+
+          <div class="stat-card">
+            <label>全體平均申報次數</label>
+            <div id="avg-reports-value" class="value">--</div>
+            <small>所有業者的平均申報量</small>
+          </div>
+
+          <div class="stat-card highlight">
+            <label for="m-input"
+              >信心常數 (m): <span id="m-value-display">25</span></label
+            >
+            <input
+              type="range"
+              id="m-input"
+              value="25"
+              min="0"
+              max="50"
+              step="1"
+            />
+            <small>範圍 0~50，預設 25，當數值為0時等於算術平均數</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="chart-view">
+        <h2>數據分佈視覺化 (X軸:申報次數, Y軸:貝氏平均逾期率)</h2>
+        <div class="chart-controls">
+          <label
+            ><input type="radio" name="chart-mode" value="bayesian" checked />
+            貝氏平均 (加權平均數) (w)</label
+          >
+          <label
+            ><input type="radio" name="chart-mode" value="arithmetic" />
+            算術平均 (r)</label
+          >
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="scatterChart"></canvas>
+        </div>
+      </section>
+
+      <section class="card" id="results">
+        <h2>分析結果列表</h2>
+        <div class="table-container">
+          <table id="results-table">
+            <thead>
+              <tr>
+                <th>業者名稱</th>
+                <th>申報次數 (v)</th>
+                <th>逾期次數</th>
+                <th class="sortable" data-sort="r">
+                  算術平均逾期率 (r) <span class="sort-icon">▼</span>
+                </th>
+                <th class="sortable" data-sort="w">
+                  貝氏平均逾期率 (w) <span class="sort-icon">▼</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 結果表格會由 JavaScript 動態生成 -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+</html>
